@@ -73,7 +73,9 @@ def list_puppies():
 def get_puppy():
     data = request.get_json()
     puppy_id = data['puppyId']
-    return jsonify(db.get('puppy:{}'.format(puppy_id)) or {})
+    puppy_string = db.get('puppy:{}'.format(puppy_id)) or '{}'
+    puppy = json.loads(puppy_string)
+    return jsonify(puppy)
 
 @app.route('/puppies/update', methods=['POST'])
 @login_required
@@ -81,8 +83,9 @@ def update_puppy():
     data = request.get_json()
     puppy_id = data['puppyId']
     new_puppy = data['newPuppy']
-    db.set('puppy:{}'.format(puppy_id), new_puppy)
-    return jsonify(new_puppy)
+    print(new_puppy, type(new_puppy))
+    db.set('puppy:{}'.format(puppy_id), json.dumps(new_puppy))
+    return jsonify(True)
 
 @app.route('/puppies/delete', methods=['POST'])
 @login_required
